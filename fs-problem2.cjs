@@ -32,15 +32,11 @@ function readAndConvertToLowerCase(upperTxtPath) {
     .then((data) => {
       const lowerTxt = data.toLowerCase();
       const sentence = lowerTxt.split(".").join("\n");
-      return fs
-        .writeFile("./lower.txt", sentence)
-        .then(() => {
-          return fs
-            .appendFile("./filename.txt", "\nlower.txt")
-            .then(() => "lower.txt")
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
+      return fs.writeFile("./lower.txt", sentence);
+    })
+    .then(() => {
+      fs.appendFile("./filename.txt", "\nlower.txt");
+      return "lower.txt";
     })
     .catch((err) => console.log(err));
 }
@@ -62,6 +58,8 @@ function readAndSort(filePath) {
     })
     .catch((err) => console.log(err));
 }
+
+
 function fileToBeDeleted(filePath) {
   return fs
     .readFile(filePath, "utf-8")
