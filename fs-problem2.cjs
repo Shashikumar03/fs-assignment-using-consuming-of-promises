@@ -1,20 +1,23 @@
 const fs = require("fs").promises;
+
 function fsProblem2() {
   readLipsumFile("./lipsum.txt")
     .then((data) => convertingToUpperCase(data))
     .then((upperTxtPath) => readAndConvertToLowerCase(upperTxtPath))
     .then((lowerFilePath) => readAndSort(lowerFilePath))
     .then((filnamePath) => fileToBeDeleted(filnamePath))
-    .then((message) => console.log(message));
+    .then((message) => {
+      console.log(message);
+    })
+    .catch((err) => {
+      throw new Error(`Error in ${err.message}`);
+    });
 }
 
 function readLipsumFile(lipsumFile) {
-  return fs
-    .readFile(lipsumFile, "utf-8")
-    .then((data) => data)
-    .catch((err) => {
-      throw new Error(`error redLipsumFile : ${err.message}`);
-    });
+  return fs.readFile(lipsumFile, "utf-8").catch((err) => {
+    throw new Error(`error redLipsumFile : ${err.message}`);
+  });
 }
 function convertingToUpperCase(data) {
   const upperText = data.toUpperCase();
@@ -34,11 +37,11 @@ function readAndConvertToLowerCase(upperTxtPath) {
       const sentence = lowerTxt.split(".").join("\n");
       return fs.writeFile("./lower.txt", sentence);
     })
-    .then(() => {
-      fs.appendFile("./filename.txt", "\nlower.txt");
-      return "lower.txt";
-    })
-    .catch((err) => console.log(err));
+    .then(() => fs.appendFile("./filename.txt", "\nlower.txt"))
+    .then(() => "lower.txt")
+    .catch((err) => {
+      throw new Error(`Error in readAndConvertToLowerCase: ${err.message}`);
+    });
 }
 
 function readAndSort(filePath) {
@@ -46,33 +49,27 @@ function readAndSort(filePath) {
     .readFile(filePath, "utf-8")
     .then((data) => {
       const sortedText = data.split("\n").sort().join("\n");
-      return fs
-        .writeFile("./sorted.txt", sortedText)
-        .then(() => {
-          return fs
-            .appendFile("./filename.txt", "\nsorted.txt")
-            .then(() => "./filename.txt")
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
+      return fs.writeFile("./sorted.txt", sortedText);
     })
-    .catch((err) => console.log(err));
+    .then(() => fs.appendFile("./filename.txt", "\nsorted.txt"))
+    .then(() => "./filename.txt")
+    .catch((err) => {
+      throw new Error(`Error in readAndSort: ${err.message}`);
+    });
 }
-
 
 function fileToBeDeleted(filePath) {
   return fs
     .readFile(filePath, "utf-8")
     .then((data) => {
       const fileToDelete = data.split("\n");
-      fileToDelete.forEach((filename) => {
-        return fs
-          .unlink(filename)
-          .then(() => "complted")
-          .catch((err) => console.log(err));
+      const filesdeletd = fileToDelete.map((filename) => {
+        fs.unlink(filename);
+        console.log(`${filename} is deleted`);
       });
-      return "completed";
+      return "succesfull completed all opration";
     })
+    .then((ss) => ss)
     .catch((err) => console.log(err));
 }
 
