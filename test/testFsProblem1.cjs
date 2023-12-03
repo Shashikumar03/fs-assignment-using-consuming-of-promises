@@ -1,3 +1,3 @@
 const fsProblem = require("../fs-problem1.cjs");
-
-fsProblem("./jsonDir", 3);
+const MKDIR_PATH = "./jsonDir";
+fsProblem(MKDIR_PATH, 3);
